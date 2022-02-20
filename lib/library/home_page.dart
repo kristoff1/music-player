@@ -21,7 +21,7 @@ class HomePageState extends State<HomePage> {
   ///Audio initiator
   AudioPlayer audioPlayer = AudioPlayer();
 
-  late int _selectedTrackIndex;
+  int _selectedTrackIndex = -1;
 
   MusicViewModel? _selectedTrack;
 
@@ -71,6 +71,7 @@ class HomePageState extends State<HomePage> {
               itemBuilder: (BuildContext context, int index) {
                 return ListItemComponent(
                     key: Key('Item$index'),
+                    isSelected: index == _selectedTrackIndex,
                     onSelected: () {
                       _playAudio(index, _listModels[index]);
                     },
@@ -84,6 +85,7 @@ class HomePageState extends State<HomePage> {
 
   void _playAudio(int index, MusicViewModel musicViewModel) {
     audioPlayer.play(musicViewModel.musicPreviewPath);
+
     setState(() {
       _selectedTrack = musicViewModel;
       _selectedTrackIndex = index;
@@ -115,7 +117,7 @@ class HomePageState extends State<HomePage> {
   }
 
   void _previousTrackClicked() {
-    if (_selectedTrackIndex < 1) {
+    if (_selectedTrackIndex == 0) {
       _playAudio(_listModels.length - 1, _listModels[_listModels.length - 1]);
     } else {
       _playAudio(_selectedTrackIndex - 1, _listModels[_selectedTrackIndex - 1]);
@@ -131,7 +133,6 @@ class HomePageState extends State<HomePage> {
             _listModels = models;
           });
         });
-        //print('get search suggestion from keyword: ${_controller.text}');
       },
     );
   }

@@ -59,7 +59,12 @@ class PlayerViewState extends State<PlayerView> {
                   builder: (BuildContext context,
                       AsyncSnapshot<PlayerState> snapshot) {
                     print('Current State ${snapshot.data.toString()}');
-                    if (snapshot.data == PlayerState.PLAYING) {
+                    if (!snapshot.hasData) {
+                      return GestureDetector(
+                        child: const Icon(Icons.pause),
+                        onTap: widget.onPauseClicked,
+                      );
+                    }else if (snapshot.data == PlayerState.PLAYING) {
                       return GestureDetector(
                         child: const Icon(Icons.pause),
                         onTap: widget.onPauseClicked,
