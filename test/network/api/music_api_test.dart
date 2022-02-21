@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:music_player/constant.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:music_player/network/api/music_api.dart';
 import 'package:music_player/pages/home/service/model.dart';
@@ -16,18 +15,33 @@ import 'music_api_test.mocks.dart';
 @GenerateMocks([http.Client])
 void main() {
   group('fetchMusic', () {
-    test('returns a Model object if the http call completes', () async {
+    final MusicApi api = MusicApi();
+    final client = MockClient();
+    final MusicService service = MusicService();
+    const String artistName = 'john mayer';
+    const String query = 'john+mayer';
+
+    setUp(() async {
       File testJson = File('assets/jsons/response_test.json');
       final testResponse = await testJson.readAsString();
-
-      final client = MockClient();
-      final MusicService service = MusicService();
-      final MusicApi api = MusicApi();
-
-      when(api.getMusicList(client, 'john+mayer'))
+      when(api.getMusicList(client, query))
           .thenAnswer((_) async => http.Response(testResponse, 200));
+    });
 
-      expect(await service.fetchMusics(client, api, 'john mayer'),
+    test('check if the network model runs properly', () async {
+      http.Response response = await api.getMusicList(client, query);
+      expect(MusicModel.fromJson(jsonDecode(response.body)), isA<MusicModel>());
+    });
+
+    test('check if data parser works properly', () async {
+      http.Response response = await api.getMusicList(client, query);
+      expect(service.parseData(MusicModel.fromJson(jsonDecode(response.body))),
+          isA<List<MusicViewModel>>());
+    });
+
+    test('returns a List of MusicViewModel object if the http call completes',
+        () async {
+      expect(await service.fetchMusics(client, api, artistName),
           isA<List<MusicViewModel>>());
     });
   });
