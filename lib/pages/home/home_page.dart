@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:music_player/component/list_item.dart';
 import 'package:music_player/component/player_view.dart';
 import 'package:music_player/component/search_view_component.dart';
-import 'package:music_player/network.dart';
-import 'package:music_player/view_model.dart';
+import 'package:music_player/pages/home/view_model.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:music_player/util/injector.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -27,8 +27,6 @@ class HomePageState extends State<HomePage> {
 
   Timer? _debounceTimer;
 
-  final NetworkHelper network = NetworkHelper();
-
   List<MusicViewModel> _listModels = [];
 
   @override
@@ -48,7 +46,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: _selectedTrack != null
+      bottomNavigationBar: _selectedTrack != null
           ? PlayerView(
               musicProgressListener: audioPlayer.onAudioPositionChanged,
               musicPlayerState: audioPlayer.onPlayerStateChanged,
@@ -85,19 +83,10 @@ class HomePageState extends State<HomePage> {
 
   void _playAudio(int index, MusicViewModel musicViewModel) {
     audioPlayer.play(musicViewModel.musicPreviewPath);
-
     setState(() {
       _selectedTrack = musicViewModel;
       _selectedTrackIndex = index;
     });
-  }
-
-  void debouncing({required Function() fn, int waitForMs = 500}) {
-    // if this function is called before 500ms [waitForMs] expired
-    //cancel the previous call
-    _debounceTimer?.cancel();
-    // set a 500ms [waitForMs] timer for the [fn] to be called
-    _debounceTimer = Timer(Duration(milliseconds: waitForMs), fn);
   }
 
   void _nextTrackClicked() {
@@ -125,15 +114,22 @@ class HomePageState extends State<HomePage> {
   }
 
   void _onSearchChange() {
-    debouncing(
-      fn: () {
-        String query = _controller.text.replaceAll(' ', '+');
-        network.fetchMusics(query).then((List<MusicViewModel> models) {
-          setState(() {
-            _listModels = models;
-          });
-        });
-      },
-    );
+    InheritedInjection.of(context).logicHelper.debounce(
+          actionTimer: _debounceTimer,
+          actionAfterDelay: () {
+            InheritedInjection.of(context)
+                .musicService
+                .fetchMusics(
+                  InheritedInjection.of(context).httpClient,
+                  InheritedInjection.of(context).musicApi,
+                  _controller.text,
+                )
+                .then((List<MusicViewModel> models) {
+              setState(() {
+                _listModels = models;
+              });
+            });
+          },
+        );
   }
 }

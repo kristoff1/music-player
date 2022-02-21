@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/view_model.dart';
+import 'package:music_player/pages/home/view_model.dart';
 
 class ListItemComponent extends StatelessWidget {
   final Function() onSelected;
@@ -26,7 +26,7 @@ class ListItemComponent extends StatelessWidget {
                 bottom: BorderSide(width: 1, color: Colors.black54))),
         child: Row(
           children: [
-            Expanded(flex: 1, child: Image.network(musicViewModel.imagePath)),
+            Expanded(flex: 2, child: Image.network(musicViewModel.imagePath)),
             Expanded(
               flex: 6,
               child: Column(
@@ -39,12 +39,15 @@ class ListItemComponent extends StatelessWidget {
                 ],
               ),
             ),
-            isSelected
-                ? const Expanded(flex: 3, child: Icon(Icons.stream))
-                : const SizedBox(
-                    height: 0,
-                    width: 0,
-                  ),
+            Expanded(
+              flex: 2,
+              child: isSelected
+                  ? const Icon(Icons.stream)
+                  : const SizedBox(
+                      height: 0,
+                      width: 0,
+                    ),
+            )
           ],
         ),
       ),

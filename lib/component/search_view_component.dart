@@ -11,6 +11,7 @@ class SearchViewComponent extends StatelessWidget {
       style: const TextStyle(color: Colors.black54),
       cursorColor: Colors.black54,
       decoration: const InputDecoration(
+        filled: true,
         fillColor: Colors.white,
         hintText: 'Search Artists',
         border: OutlineInputBorder(),

@@ -1,4 +1,4 @@
-import 'model.dart';
+import 'service/model.dart';
 
 class MusicViewModel {
   String title;
