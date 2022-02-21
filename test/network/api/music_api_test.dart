@@ -39,6 +39,15 @@ void main() {
           isA<List<MusicViewModel>>());
     });
 
+    test('check if the result contains audio file', () async {
+      http.Response response = await api.getMusicList(client, query);
+      expect(
+          service
+              .parseData(MusicModel.fromJson(jsonDecode(response.body)))[0]
+              .musicPreviewPath,
+          contains('.m4a'));
+    });
+
     test('returns a List of MusicViewModel object if the http call completes',
         () async {
       expect(await service.fetchMusics(client, api, artistName),
