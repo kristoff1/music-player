@@ -10,7 +10,7 @@ import 'package:music_player/pages/home/service/model.dart';
 import 'package:music_player/pages/home/service/music_service.dart';
 import 'package:music_player/pages/home/view_model.dart';
 
-import 'music_api_test.mocks.dart';
+import 'music_service_test.mocks.dart';
 
 @GenerateMocks([http.Client])
 void main() {
@@ -48,10 +48,20 @@ void main() {
           contains('.m4a'));
     });
 
+    test('check if the result contains the correct album artwork image',
+            () async {
+          http.Response response = await api.getMusicList(client, query);
+          expect(
+              service
+                  .parseData(MusicModel.fromJson(jsonDecode(response.body)))[0]
+                  .imagePath,
+              contains('.jpg'));
+        });
+
     test('returns a List of MusicViewModel object if the http call completes',
-        () async {
-      expect(await service.fetchMusics(client, api, artistName),
-          isA<List<MusicViewModel>>());
-    });
+            () async {
+          expect(await service.fetchMusics(client, api, artistName),
+              isA<List<MusicViewModel>>());
+        });
   });
 }
