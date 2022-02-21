@@ -9,6 +9,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:music_player/util/injector.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return HomePageState();
@@ -48,6 +50,7 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       bottomNavigationBar: _selectedTrack != null
           ? PlayerView(
+              key: const Key('PlayerView'),
               musicProgressListener: audioPlayer.onAudioPositionChanged,
               musicPlayerState: audioPlayer.onPlayerStateChanged,
               duration: _selectedTrack?.trackLength,
@@ -65,6 +68,7 @@ class HomePageState extends State<HomePage> {
       ),
       body: _listModels.isNotEmpty
           ? ListView.builder(
+              key: const Key('MusicList'),
               itemCount: _listModels.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListItemComponent(
@@ -76,6 +80,7 @@ class HomePageState extends State<HomePage> {
                     musicViewModel: _listModels[index]);
               })
           : const Center(
+              key: Key('InitialView'),
               child: Text('Search Artist to Load Musics'),
             ),
     );
@@ -117,19 +122,19 @@ class HomePageState extends State<HomePage> {
     InheritedInjection.of(context).logicHelper.debounce(
           actionTimer: _debounceTimer,
           actionAfterDelay: () {
-            InheritedInjection.of(context)
-                .musicService
-                .fetchMusics(
-                  InheritedInjection.of(context).httpClient,
-                  InheritedInjection.of(context).musicApi,
-                  _controller.text,
-                )
-                .then((List<MusicViewModel> models) {
-              setState(() {
-                _listModels = models;
-              });
-            });
-          },
+                  InheritedInjection.of(context)
+                      .musicService
+                      .fetchMusics(
+                        InheritedInjection.of(context).httpClient,
+                        InheritedInjection.of(context).musicApi,
+                        _controller.text,
+                      )
+                      .then((List<MusicViewModel> models) {
+                    setState(() {
+                      _listModels = models;
+                    });
+                  });
+                },
         );
   }
 }

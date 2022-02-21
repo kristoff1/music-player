@@ -16,7 +16,8 @@ class PlayerView extends StatefulWidget {
 
   final Function() onNextTrackClicked;
 
-  PlayerView({
+  const PlayerView({
+    Key? key,
     required this.musicProgressListener,
     required this.musicPlayerState,
     required this.onPlayClicked,
@@ -24,7 +25,7 @@ class PlayerView extends StatefulWidget {
     required this.onNextTrackClicked,
     required this.onPreviousTrackClicked,
     required this.duration,
-  });
+  }): super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -59,7 +60,6 @@ class PlayerViewState extends State<PlayerView> {
                   stream: widget.musicPlayerState,
                   builder: (BuildContext context,
                       AsyncSnapshot<PlayerState> snapshot) {
-                    print('Current State ${snapshot.data.toString()}');
                     if (!snapshot.hasData) {
                       return GestureDetector(
                         child: const Icon(Icons.pause),
@@ -103,7 +103,6 @@ class PlayerViewState extends State<PlayerView> {
                     value: 0,
                   );
                 } else if (snapshot.hasData) {
-                  print('Duration Stream ${snapshot.data.toString()}');
                   return LinearProgressIndicator(
                     value: snapshot.data!.inMilliseconds / widget.duration!,
                   );
