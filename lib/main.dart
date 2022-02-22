@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
     return InheritedInjection(
       isTesting: false,
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Music Player',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
